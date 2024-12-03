@@ -13,6 +13,12 @@ from typing import List, Union, Optional
 from numpy.lib import NumpyVersion
 import sys
 
+import multiprocessing
+import parmap
+
+# Set the start method to 'fork'
+multiprocessing.set_start_method('fork', force=True)
+
 #os.chdir("/Users/bombina2/github/SCSAWorkflow_Fork/src/spac")
 os.chdir("/Users/bombina2/github/SCSAWorkflow_Fork/drafts")
 
@@ -231,13 +237,13 @@ run_utag_clustering(
         max_dist=20,
         n_principal_components=10,
         random_state=42,
-        n_jobs=1,
+        n_jobs=5,
         n_iterations=5,
         slide_key="roi",
         layer=None,
         output_annotation="UTAG",
         associated_table=None,
-        parallel = False)
+        parallel = True)
 
 print(adata)
 

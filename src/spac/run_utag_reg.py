@@ -4,6 +4,12 @@ import pandas as pd
 import numpy as np
 from spac.transformations import _validate_transformation_inputs, _select_input_features
 
+import multiprocessing
+import parmap
+
+# Set the start method to 'fork'
+multiprocessing.set_start_method('fork', force=True)
+
 def run_utag_clustering(
         adata,
         features=None,

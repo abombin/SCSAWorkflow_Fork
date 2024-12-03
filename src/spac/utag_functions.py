@@ -26,7 +26,7 @@ def sparse_matrix_dstack(
     n = sum([x.shape[0] for x in matrices])
     _res = list()
     i = 0
-    for x in tqdm(matrices):
+    for x in matrices:
         v = scipy.sparse.csr_matrix((x.shape[0], n))
         v[:, i : i + x.shape[0]] = x
         _res.append(v)
@@ -96,8 +96,8 @@ def utag(
     resolutions: tp.Sequence[float] = [0.05, 0.1, 0.3, 1.0],
     leiden_kwargs: tp.Dict[str, tp.Any] = None,
     parc_kwargs: tp.Dict[str, tp.Any] = None,
-    parallel: bool = True,
-    processes: int = None,
+    parallel: bool = False,
+    processes: int = 1,
     k=15,
 ):
     """
@@ -241,7 +241,7 @@ def utag(
             print("Running UMAP on Input Dataset...")
             sc.tl.umap(ad_result, **umap_kwargs)
 
-        for resolution in tqdm(resolutions):
+        for resolution in resolutions:
 
             res_key1 = save_key + "_leiden_" + str(resolution)
             res_key3 = save_key + "_kmeans_" + str(resolution)
