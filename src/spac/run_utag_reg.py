@@ -2,7 +2,8 @@ import scanpy as sc
 from spac.utag_functions import utag
 import pandas as pd
 import numpy as np
-from spac.transformations import _validate_transformation_inputs, _select_input_features
+from spac.transformations import _validate_transformation_inputs
+from spac.transformations import _select_input_features
 
 import multiprocessing
 import parmap
@@ -35,7 +36,8 @@ def run_utag_clustering(
     adata : anndata.AnnData
         The AnnData object.
     features : list
-        List of features to use for clustering or for PCA. Default (None) is to use all.
+        List of features to use for clustering or for PCA. Default 
+        (None) is to use all.
     k : int
         The number of nearest neighbor to be used in creating the graph.
         Default is 15.
@@ -53,9 +55,9 @@ def run_utag_clustering(
     n_iterations : int
         Number of iterations for the clustering.
     slide_key: str
-        Key of adata.obs containing information on the batch structure of the data.
-        In general, for image data this will often be a variable indicating the image
-        so image-specific effects are removed from data.
+        Key of adata.obs containing information on the batch structure 
+        of the data.In general, for image data this will often be a variable 
+        indicating the imageb so image-specific effects are removed from data.
         Default is "Slide".
 
     Returns
@@ -96,7 +98,8 @@ def run_utag_clustering(
         apply_clustering=True,
         clustering_method="leiden",
         resolutions=resolutions,
-        leiden_kwargs={"n_iterations": n_iterations, "random_state": random_state},
+        leiden_kwargs={"n_iterations": n_iterations, 
+                       "random_state": random_state},
         pca_kwargs={"n_comps": n_principal_components},
         parallel=parallel,
         processes=n_jobs,

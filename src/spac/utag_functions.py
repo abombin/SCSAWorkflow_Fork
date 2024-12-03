@@ -92,7 +92,7 @@ def utag(
     apply_umap: bool = False,
     umap_kwargs: tp.Dict[str, tp.Any] = dict(),
     apply_clustering: bool = True,
-    clustering_method: tp.Sequence[str] = ["leiden", "kmeans"],
+    clustering_method: tp.Sequence[str] = ["leiden"],
     resolutions: tp.Sequence[float] = [0.05, 0.1, 0.3, 1.0],
     leiden_kwargs: tp.Dict[str, tp.Any] = None,
     parc_kwargs: tp.Dict[str, tp.Any] = None,
@@ -114,12 +114,12 @@ def utag(
     max_dist: float
         Maximum distance to cut edges within a graph.
         Should be adjusted depending on resolution of images.
-        For imaging mass cytometry, where resolution is 1um, 20 often gives good results.
-        Default is 20.
+        For imaging mass cytometry, where resolution is 1um, 20 often 
+        gives good results. Default is 20.
     slide_key: {str, None}
-        Key of adata.obs containing information on the batch structure of the data.
-        In general, for image data this will often be a variable indicating the image
-        so image-specific effects are removed from data.
+        Key of adata.obs containing information on the batch structure 
+        of the data. In general, for image data this will often be a variable 
+        indicating the image so image-specific effects are removed from data.
         Default is "Slide".
     save_key: str
         Key to be added to adata object holding the UTAG clusters.
@@ -136,24 +136,26 @@ def utag(
         Method to normalize adjacency matrix.
         Default is "l1_norm", any other value will not use normalization.
     keep_spatial_connectivity: bool
-        Whether to keep sparse matrices of spatial connectivity and distance in the obsp attribute of the
-        resulting anndata object. This could be useful in downstream applications.
+        Whether to keep sparse matrices of spatial connectivity and distance 
+        in the obsp attribute of the resulting anndata object. This could be 
+        useful in downstream applications.
         Default is not to (False).
     pca_kwargs: Dict[str, Any]
-        Keyword arguments to be passed to scanpy.pp.pca for dimensionality reduction after message passing.
+        Keyword arguments to be passed to scanpy.pp.pca for dimensionality 
+        reduction after message passing.
         Default is to pass n_comps=10, which uses 10 Principal Components.
     apply_umap: bool
         Whether to build a UMAP representation after message passing.
         Default is False.
     umap_kwargs: Dict[str, Any]
-        Keyword arguments to be passed to scanpy.tl.umap for dimensionality reduction after message passing.
-        Default is 10.0.
+        Keyword arguments to be passed to scanpy.tl.umap for dimensionality 
+        reduction after message passing. Default is 10.0.
     apply_clustering: bool
         Whether to cluster the message passed matrix.
         Default is True.
     clustering_method: Sequence[str]
-        Which clustering method(s) to use for clustering of the message passed matrix.
-        Default is ["leiden", "parc"].
+        Which clustering method(s) to use for clustering of the 
+        message passed matrix. Default is ["leiden"].
     resolutions: Sequence[float]
         What resolutions should the methods in `clustering_method` be run at.
         Default is [0.05, 0.1, 0.3, 1.0].
@@ -172,7 +174,8 @@ def utag(
     Returns
     -------
     adata: AnnData
-        AnnData object with UTAG domain predictions for each cell in adata.obs, column `save_key`.
+        AnnData object with UTAG domain predictions for each cell in adata.obs,
+        column `save_key`.
     """
     ad = adata.copy()
 
@@ -188,7 +191,8 @@ def utag(
         clustering_method = [clustering_method.upper()]
     else:
         print(
-            "Invalid Clustering Method. Clustering Method Should Either be a string or a list"
+            """Invalid Clustering Method. Clustering Method Should Either be 
+            a string or a list"""
         )
         return
     assert all(m in ["LEIDEN", "KMEANS"] for m in clustering_method)
@@ -221,7 +225,8 @@ def utag(
                 [x.obsp["spatial_distances"] for x in ad_list]
             )
     else:
-        sq.gr.spatial_neighbors(ad, radius=max_dist, coord_type="generic", set_diag=True)
+        sq.gr.spatial_neighbors(ad, radius=max_dist, coord_type="generic", 
+                                set_diag=True)
         ad_result = custom_message_passing(ad, mode=normalization_mode)
 
     if apply_clustering:
