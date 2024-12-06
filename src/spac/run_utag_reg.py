@@ -17,7 +17,7 @@ def run_utag_clustering(
         k=15,
         resolution=1,
         max_dist=20,
-        n_principal_components=10,
+        n_pcs=10,
         random_state=42,
         n_jobs=1,
         n_iterations=5,
@@ -80,15 +80,16 @@ def run_utag_clustering(
     if random_state is not None:
         np.random.seed(random_state)
 
-    data = _select_input_features(
+    if features is not None:
+        data = _select_input_features(
         adata=adata,
         layer=layer,
         associated_table=associated_table,
-        features=features
-    )
-
-    adata_utag = adata.copy()
-    adata_utag.X = data
+        features=features,)
+        adata_utag = adata[:, features].copy()
+        adata_utag.X = data
+    else:
+        adata_utag = adata.copy()
     
     utag_results = utag(
         adata_utag,
@@ -100,7 +101,7 @@ def run_utag_clustering(
         resolutions=resolutions,
         leiden_kwargs={"n_iterations": n_iterations, 
                        "random_state": random_state},
-        pca_kwargs={"n_comps": n_principal_components},
+        n_pcs=n_pcs,
         parallel=parallel,
         processes=n_jobs,
         k=k,
@@ -108,7 +109,7 @@ def run_utag_clustering(
 
     curClusterCol = 'UTAG Label_leiden_' + str(resolution)
     cluster_list = utag_results.obs[curClusterCol].copy()
-    adata.obs[output_annotation] = pd.Categorical(cluster_list)
+    adata.obs[output_annotation] = cluster_list.copy()
     adata.uns["utag_features"] = features
 
 

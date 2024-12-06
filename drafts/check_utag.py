@@ -134,7 +134,7 @@ def run_utag_clustering(
         k=15,
         resolution=1,
         max_dist=20,
-        n_principal_components=10,
+        n_pcs=10,
         random_state=42,
         n_jobs=1,
         n_iterations=5,
@@ -215,15 +215,16 @@ def run_utag_clustering(
         clustering_method="leiden",
         resolutions=resolutions,
         leiden_kwargs={"n_iterations": n_iterations, "random_state": random_state},
-        pca_kwargs={"n_comps": n_principal_components},
+        n_pcs = n_pcs,
         parallel=True,
         processes=n_jobs,
         k=k,
+        random_state=random_state
     )
-
+    print(n_pcs)
     curClusterCol = 'UTAG Label_leiden_' + str(resolution)
     cluster_list = utag_results.obs[curClusterCol].copy()
-    adata.obs[output_annotation] = pd.Categorical(cluster_list)
+    adata.obs[output_annotation] = cluster_list
     adata.uns["utag_features"] = features
 
 
@@ -235,16 +236,44 @@ run_utag_clustering(
         k=15,
         resolution=1,
         max_dist=20,
-        n_principal_components=10,
+        n_pcs=0,
         random_state=42,
-        n_jobs=5,
-        n_iterations=5,
+        n_jobs=1,
+        n_iterations=1,
         slide_key="roi",
         layer=None,
         output_annotation="UTAG",
         associated_table=None,
-        parallel = True)
+        parallel = False)
 
 print(adata)
 
-print(adata.obs["UTAG"])
+first_run_clusters = adata.obs['UTAG'].copy()
+run1 = list(adata.obs["UTAG"].copy())
+
+del adata.obs["UTAG"]
+#adata = sc.read("/Users/bombina2/github/multiplex-analysis-web-apps/input/healthy_lung_adata.h5ad")
+
+
+run_utag_clustering(
+        adata,
+        features=None,
+        k=15,
+        resolution=1,
+        max_dist=20,
+        n_pcs=0,
+        random_state=42,
+        n_jobs=1,
+        n_iterations=10,
+        slide_key="roi",
+        layer=None,
+        output_annotation="UTAG",
+        associated_table=None,
+        parallel = False)
+
+run2 = list(adata.obs["UTAG"].copy())
+
+
+print(run1 == run2)
+
+print(first_run_clusters == adata.obs['UTAG'])

@@ -88,7 +88,7 @@ def utag(
     max_dist: float = 20.0,
     normalization_mode: str = "l1_norm",
     keep_spatial_connectivity: bool = False,
-    pca_kwargs: tp.Dict[str, tp.Any] = dict(n_comps=10),
+    n_pcs = 10,
     apply_umap: bool = False,
     umap_kwargs: tp.Dict[str, tp.Any] = dict(),
     apply_clustering: bool = True,
@@ -99,6 +99,7 @@ def utag(
     parallel: bool = False,
     processes: int = 1,
     k=15,
+    random_state=42,
 ):
     """
     Discover tissue architechture in single-cell imaging data
@@ -230,17 +231,19 @@ def utag(
         ad_result = custom_message_passing(ad, mode=normalization_mode)
 
     if apply_clustering:
-        if "n_comps" in pca_kwargs:
-            if pca_kwargs["n_comps"] > ad_result.shape[1]:
-                pca_kwargs["n_comps"] = ad_result.shape[1] - 1
-                print(
-                    f"Overwriding provided number of PCA dimensions to match number of features: {pca_kwargs['n_comps']}"
-                )
-        if pca_kwargs["n_comps"] == 0:
-            sc.pp.neighbors(ad_result, n_pcs=0, n_neighbors=k)
+        # if "n_comps" in pca_kwargs:
+        #     if pca_kwargs["n_comps"] > ad_result.shape[1]:
+        #         pca_kwargs["n_comps"] = ad_result.shape[1] - 1
+        #         print(
+        #             f"Overwriding provided number of PCA dimensions to match number of features: {pca_kwargs['n_comps']}"
+        #         )
+        if n_pcs == 0:
+            print("0 components")
+            sc.pp.neighbors(ad_result, n_pcs=0, n_neighbors=k, random_state=random_state)
         else:
-             sc.tl.pca(ad_result, **pca_kwargs)
-             sc.pp.neighbors(ad_result, n_neighbors=k)
+            print("execute with principal components")
+            sc.tl.pca(ad_result, n_comps=n_pcs)
+            sc.pp.neighbors(ad_result, n_neighbors=k, n_pcs=n_pcs, random_state=random_state)
 
         if apply_umap:
             print("Running UMAP on Input Dataset...")
