@@ -18,6 +18,51 @@ class TestRunUtagClustering(unittest.TestCase):
         self.adata.obsm['spatial'] = np.random.rand(n_cells, 2)  # Add spatial coordinates
         self.features = ['gene1', 'gene2', 'gene3']
         self.layer = 'counts'
+        
+        # make a dataset for clustering with 2 clusters
+        
+        self.syn_dataset = np.array([
+                    np.concatenate(
+                            (
+                                np.random.normal(100, 1, 500),
+                                np.random.normal(10, 1, 500)
+                            )
+                        ),
+                    np.concatenate(
+                            (
+                                np.random.normal(10, 1, 500),
+                                np.random.normal(100, 1, 500)
+                            )
+                        ),
+                ]).reshape(-1, 2)
+
+        self.syn_data = AnnData(
+                self.syn_dataset,
+                var=pd.DataFrame(index=['gene1',
+                                        'gene2'])
+                )
+        self.syn_data.layers['counts'] = self.syn_dataset
+
+        self.syn_data.obsm['derived_features'] = \
+            self.syn_dataset
+        
+        # add spatial coordinates    
+        self.syn_data.obsm['spatial'] = np.array([
+                    np.concatenate(
+                            (
+                                np.random.normal(100, 1, 500),
+                                np.random.normal(10, 1, 500)
+                            )
+                        ),
+                    np.concatenate(
+                            (
+                                np.random.normal(10, 1, 500),
+                                np.random.normal(100, 1, 500)
+                            )
+                        ),
+                ]).reshape(-1, 2)
+    
+
 
     def test_same_cluster_assignments_with_same_seed(self):
         # Run run_utag_clustering with a specific seed
@@ -69,7 +114,7 @@ class TestRunUtagClustering(unittest.TestCase):
                             k=15,
                             resolution=1,
                             max_dist=20,
-                            n_principal_components=2,
+                            n_pcs=2,
                             random_state=42,
                             n_jobs=1,
                             n_iterations=5,
@@ -90,7 +135,7 @@ class TestRunUtagClustering(unittest.TestCase):
                             k=15,
                             resolution=1,
                             max_dist=20,
-                            n_principal_components=2,
+                            n_pcs=2,
                             random_state=42,
                             n_jobs=1,
                             n_iterations=5,
@@ -108,7 +153,7 @@ class TestRunUtagClustering(unittest.TestCase):
                             k=15,
                             resolution=1,
                             max_dist=20,
-                            n_principal_components=2,
+                            n_pcs=2,
                             random_state=42,
                             n_jobs=1,
                             n_iterations=5,
@@ -129,7 +174,7 @@ class TestRunUtagClustering(unittest.TestCase):
                                 k='invalid',
                                 resolution=1,
                                 max_dist=20,
-                                n_principal_components=2,
+                                n_pcs=2,
                                 random_state=42,
                                 n_jobs=1,
                                 n_iterations=5,
@@ -138,6 +183,27 @@ class TestRunUtagClustering(unittest.TestCase):
                                 output_annotation="UTAG",
                                 associated_table=None,
                                 parallel=False)
+            
+    def test_clustering_accuracy(self):
+        run_utag_clustering(adata=self.syn_data,
+                            features=None,
+                            k=15,
+                            resolution=1,
+                            max_dist=20,
+                            n_pcs=0,
+                            random_state=42,
+                            n_jobs=1,
+                            n_iterations=5,
+                            slide_key=None,
+                            layer=None, 
+                            output_annotation="UTAG",
+                            associated_table=None,
+                            parallel=False)
+
+        self.assertIn('UTAG', self.syn_data.obs)
+        self.assertEqual(
+            len(np.unique(self.syn_data.obs['UTAG'])),
+            2)
 
 if __name__ == '__main__':
     unittest.main()
