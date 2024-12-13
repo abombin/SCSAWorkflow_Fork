@@ -141,10 +141,8 @@ def utag(
         in the obsp attribute of the resulting anndata object. This could be 
         useful in downstream applications.
         Default is not to (False).
-    pca_kwargs: Dict[str, Any]
-        Keyword arguments to be passed to scanpy.pp.pca for dimensionality 
-        reduction after message passing.
-        Default is to pass n_comps=10, which uses 10 Principal Components.
+    n_pcs: Number of principal components to use for clustering. Default is 10.
+    If None, no PCA is performed and clustering is done on features.
     apply_umap: bool
         Whether to build a UMAP representation after message passing.
         Default is False.
@@ -229,13 +227,13 @@ def utag(
         sq.gr.spatial_neighbors(ad, radius=max_dist, coord_type="generic", 
                                 set_diag=True)
         ad_result = custom_message_passing(ad, mode=normalization_mode)
-    # perhaps change to do neigbours without PCA to None
+    
     if apply_clustering:
-        if n_pcs == 0:
+        if n_pcs == None:
             print("0 components")
             sc.pp.neighbors(ad_result, n_pcs=0, n_neighbors=k, random_state=random_state, use_rep="X")
         else:
-            print("execute with principal components")
+            print(f"execute with {n_pcs} principal components")
             sc.tl.pca(ad_result, n_comps=n_pcs)
             sc.pp.neighbors(ad_result, n_neighbors=k, n_pcs=n_pcs, random_state=random_state, use_rep='X_pca')
 

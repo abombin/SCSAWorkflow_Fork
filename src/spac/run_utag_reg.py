@@ -76,7 +76,7 @@ def run_utag_clustering(
     
     # add print the current k value
     if not isinstance(k, int) or k <= 0:
-        raise ValueError("`k` must be a positive integer")
+        raise ValueError(f"`k` must be a positive integer, but received {k}.")
 
     if random_state is not None:
         np.random.seed(random_state)
