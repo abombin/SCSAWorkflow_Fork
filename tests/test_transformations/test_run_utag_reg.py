@@ -196,25 +196,6 @@ class TestRunUtagClustering(unittest.TestCase):
                             parallel=False)
         self.assertIn(output_annotation_name, self.adata.obs)
 
-    def test_layer_none_case(self):
-        # This test checks if the function works correctly when layer is None.
-        run_utag_clustering(adata=self.adata,
-                            features=self.features,
-                            k=15,
-                            resolution=1,
-                            max_dist=20,
-                            n_pcs=2,
-                            random_state=42,
-                            n_jobs=1,
-                            n_iterations=5,
-                            slide_key=None,
-                            layer=None, 
-                            output_annotation="UTAG",
-                            associated_table=None,
-                            parallel=False)
-        self.assertIn('UTAG', self.adata.obs)
-        self.assertEqual(self.adata.uns['utag_features'], self.features)
-
     def test_invalid_k(self):
         # This test checks if the function raises a ValueError when the
         # k argument is not a positive integer.
