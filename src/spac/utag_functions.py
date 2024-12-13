@@ -229,7 +229,7 @@ def utag(
         sq.gr.spatial_neighbors(ad, radius=max_dist, coord_type="generic", 
                                 set_diag=True)
         ad_result = custom_message_passing(ad, mode=normalization_mode)
-
+    # perhaps change to do neigbours without PCA to None
     if apply_clustering:
         if n_pcs == 0:
             print("0 components")

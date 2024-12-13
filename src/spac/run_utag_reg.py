@@ -74,6 +74,7 @@ def run_utag_clustering(
         features=features
     )
     
+    # add print the current k value
     if not isinstance(k, int) or k <= 0:
         raise ValueError("`k` must be a positive integer")
 
@@ -106,7 +107,7 @@ def run_utag_clustering(
         processes=n_jobs,
         k=k,
     )
-
+    # change camel case to snake 
     curClusterCol = 'UTAG Label_leiden_' + str(resolution)
     cluster_list = utag_results.obs[curClusterCol].copy()
     adata.obs[output_annotation] = cluster_list.copy()

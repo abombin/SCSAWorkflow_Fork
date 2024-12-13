@@ -5,6 +5,8 @@ import pandas as pd
 from anndata import AnnData
 from spac.run_utag_reg import run_utag_clustering
 
+# change setting the initiation of the data as separate functions 
+
 class TestRunUtagClustering(unittest.TestCase):
     def setUp(self):
         # This method is run before each test.
